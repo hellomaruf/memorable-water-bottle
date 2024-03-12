@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import Bottle from "./Bottle";
 import { addToLocalStorage, getStorageCart } from "../../utilliti/localstorage";
+import Cart from "../../cart/Cart";
 
 function Bottles() {
   const [bottle, setBottle] = useState([]);
@@ -18,15 +19,19 @@ function Bottles() {
 
   // load cart from local storage **********
   useEffect(() => {
-    console.log("Called the use effect ", bottle.length);
     if (bottle.length > 0) {
       const storedCart = getStorageCart();
-        storedCart.map((id) => {
-          console.log(id);
-      })
+      const savedCart = [];
+      storedCart.map((id) => {
+        const findBottle = bottle.find((bottle) => bottle.id === id);
+        if (findBottle) {
+          savedCart.push(bottle);
+        }
+      });
+      console.log("saved card", savedCart);
+      setAddToCart(savedCart);
     }
   }, [bottle]);
-
   const handleAddToCart = (bottle) => {
     const newAddToCart = [...addToCart, bottle];
     setAddToCart(newAddToCart);
@@ -34,9 +39,7 @@ function Bottles() {
   };
   return (
     <div>
-      <h2 className=" text-center text-xl font-bold pt-2">
-        Card : {addToCart.length}
-      </h2>
+          <Cart cart={ addToCart} />
       <div className="grid grid-cols-4 max-w-7xl mx-auto">
         {bottle.map((items, index) => (
           <Bottle
